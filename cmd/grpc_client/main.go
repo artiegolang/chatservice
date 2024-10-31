@@ -1,16 +1,16 @@
 package main
 
 import (
+	"chat/pkg/note_v1"
 	"context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
-	"micri/pkg/note_v1"
 	"time"
 )
 
 const (
-	address = "localhost:50051"
+	address = "localhost:50052"
 	noteID  = 12
 )
 
@@ -21,14 +21,15 @@ func main() {
 	}
 	defer conn.Close()
 
-	c := note_v1.NewAuthAPIClient(conn)
+	c := note_v1.NewChatAPIClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	r, err := c.GetUser(ctx, &note_v1.GetUserRequest{Id: noteID})
+	r, err := c.CreateChat(ctx, &note_v1.CreateChatRequest{Usermanes: []string{"user1", "user2"}})
 	if err != nil {
-		log.Fatalf("could not get user: %v", err)
+		log.Fatalf("could not create chat: %v", err)
 	}
-	log.Printf("User: %v", r)
+
+	log.Printf("Chat: %v", r)
 }
